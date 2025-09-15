@@ -53,7 +53,7 @@ And point your browser to `http://localhost:3000`.
 
 ## Где смотреть
 - Все события проходят по WebSocket в браузере:
-  - вкладка **Network → WS** → соединение с сервером.
+  - вкладка **Network - WS** соединение с сервером.
   - во вкладке **Messages** видно:
     - от клиента: `add user`, `new message`, `typing`, `stop typing`;
     - от сервера: `login`, `user joined`, `user left`, `new message`, `typing`, `stop typing`.
