@@ -1,8 +1,3 @@
-
-# Socket.IO Chat
-
-A simple chat demo for Socket.IO
-
 ## How to use
 
 ```
@@ -10,13 +5,56 @@ $ npm i
 $ npm start
 ```
 
-And point your browser to `http://localhost:3000`. Optionally, specify
-a port by supplying the `PORT` env variable.
+And point your browser to `http://localhost:3000`. 
 
-## Features
+# Logic code
 
-- Multiple users can join a chat room by each entering a unique username
-on website load.
-- Users can type chat messages to the chat room.
-- A notification is sent to all users when a user joins or leaves
-the chatroom.
+## Вход в чат
+1. При загрузке страницы:
+    - Пользователь вводит свое имя
+    - После вызывается событие `setUsername`, устанавливается подключение к чату
+    - Идет событие `add user` и сервер сохраняет имя в сессии
+    - Далее отпрвака 'login' и если кто то есть, рассылает `user joined`
+
+---------------------------------------------
+
+## Отправка сообщений
+1. При наборе текста:
+    - Клиент вызывает `updateTyping`
+    - Если сообщение не отправлено, то идет  `typing`
+    - Cервер получает это и рассылает событие 'Typing', остальные видят "name is typing"
+    - Если пользатель перестал печатать, то клиент выдает 'stop typing'
+    - После сервер рассылает "stop typing" и статус "name is typing" изчезает
+2. Отправка сообщений:
+    - Пользователь набирает текст и нажимает *Enter*
+    - Клиент вызывает `sendMessage`
+    - Сервер получает `new message`
+    - Рассылает событие `new message` всем остальным клиентam
+    - Остальные клиенты отображают сообщение в спискe
+
+---------------------------------------------
+
+## Выход из чата
+1. При закрытии чата
+    - Пользователь закрывает вкладку или соединение обрывается
+    - Сервер фиксирует событие `disconnect`
+    - Уменьшает счётчик участников
+    - Pассылает событие `user left` всем остальным
+    - Остальные клиенты видят сообщение `name left` и обновлённое число участников
+
+---------------------------------------------
+
+## Основные события
+- **disconnect** — клиенту выводится сообщение "you have been disconnected"
+- **reconnect** — при восстановлении соединения клиент снова отправляет `add user`
+- **reconnect_error** — сообщение "attempt to reconnect has failed"
+
+---------------------------------------------
+
+## Где смотреть
+- Все события проходят по WebSocket в браузере:
+  - вкладка **Network → WS** → соединение с сервером.
+  - во вкладке **Messages** видно:
+    - от клиента: `add user`, `new message`, `typing`, `stop typing`;
+    - от сервера: `login`, `user joined`, `user left`, `new message`, `typing`, `stop typing`.
+
